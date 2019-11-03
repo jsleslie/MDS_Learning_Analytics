@@ -172,6 +172,7 @@ def test_model(test_title, index, dictionary, model):
             ind_to_return.append(ind)
 
     return ind_to_return
+
 ###########################################
 # APP LAYOUT
 ###########################################
@@ -213,6 +214,9 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
             html.Label("New message:"),
             dcc.Input(id="topic_message", placeholder="Message Details",
                       type="text", size="75", style={'height': 250}),
+            html.Br(),
+            html.Br(),
+            html.Button('Submit', id='button'),
             html.Hr(),
             html.H5("Existing discussions"),
             html.Div(id="topic_prediction")
