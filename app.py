@@ -15,12 +15,10 @@ import plotly.graph_objs as go
 import plotly_express as px
 
 
-
-
-
 ###########################################
 # GETTING DATA
 ###########################################
+df_discussions = pd.read_csv("data/2019-11-02_reddit-data-learnmath_scrubbed.csv")
 
 
 ###########################################
@@ -49,16 +47,25 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
     html.Div(className="row", children=[
         # SIDEBAR
         html.Div(className="two columns", style={'padding': 20}, children=[
-            dcc.Markdown("![img](assets/ubc-logo-2.png)"),
-            html.P("UBC LOGO"),
-            html.P("Place holder text")
-            ]),
+            html.Img(src="assets/ubc-logo-2.png", width="50"),
+            html.P("Home\nAnnouncements\nDiscussions\nGrades\nPeople")
+        ]),
         # DISCUSSION BOARD
         html.Div(className="ten columns", style={"backgroundColor": colors['white'], "padding": 20}, children=[
-            html.H4("New topic title"),
-            html.P("...place holder for text box..."),
-            html.H5("Enter details below"),
-            html.P("...place holder for text box2...")
+            html.H4("Start a new discussion"),
+            html.Label("New topic title:"),
+            dcc.Input(id="topic_title", placeholder="Topic Title",
+                      type="text", size="75"),
+            html.Br(),
+            html.Br(),
+            html.Label("New message:"),
+            dcc.Input(id="topic_message", placeholder="Message Details",
+                      type="text", size="75", style={'height': 250}),
+            html.Hr(),
+            html.H5("Existing discussions"),
+            html.Label("Check if your question has already been answered:"),
+            html.P("...placeholder for results...")
+            
         ])
     ])
 ])
