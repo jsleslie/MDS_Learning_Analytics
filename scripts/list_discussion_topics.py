@@ -3,6 +3,7 @@ import dotenv
 import os
 import pandas as pd
 
+
 def get_canvas_posts(write_csv=False):
     """
     Queries canvas API to return discussion topics for selected course.
@@ -15,23 +16,29 @@ def get_canvas_posts(write_csv=False):
 
     Returns:
         pd.DataFrame -- [description]
-    
+
     Reference:
         https://canvasapi.readthedocs.io/en/latest/course-ref.html#canvasapi.course.Course.get_discussion_topics
     """
-    # SET UP
+    ##############################################
+    # API SET UP
+    ##############################################
     dotenv.load_dotenv(dotenv.find_dotenv())
     API_URL = "https://ubc.instructure.com"
     API_KEY = os.environ.get('CANVAS_API_TOKEN')
     # Initialize a new Canvas object
     canvas = Canvas(API_URL, API_KEY)
 
+    ##############################################
     # GET DATA
+    ##############################################
     course = canvas.get_course(46341)
-    print(course)
+    print(f"{'#'*25}\nGETTING POSTS FROM:\n{'#'*25}\n{course}")
     topics = course.get_discussion_topics()
 
+    ##############################################
     # PARSE AND CLEAN DATA
+    ##############################################
     post_id = list()
     discussion_topic_title = list()
     discussion_topic_message = list()
@@ -44,17 +51,23 @@ def get_canvas_posts(write_csv=False):
         url.append(i.url)
 
     df = pd.DataFrame({"post_id": post_id,
-                        "discussion_topic_title": discussion_topic_title,
-                        "discussion_topic_message": discussion_topic_message,
-                        "url": url})
+                       "discussion_topic_title": discussion_topic_title,
+                       "discussion_topic_message": discussion_topic_message,
+                       "url": url})
 
+    ##############################################
+    # WRITE DATA
+    ##############################################
     if write_csv:
-        df.to_csv("data/canvas-discussion-posts.csv", index=False)
+        path_out = "data/canvas-discussion-posts.csv"
+        print(f"{'#'*25}\nWriting posts to:\n{path_out}")
+        df.to_csv(path_out, index=False)
 
     return df
 
-df = get_canvas_posts(write_csv=False)
-print(df.info())
-
-
-
+if __name__ == "__main__":
+    df = get_canvas_posts(write_csv=False)
+    print("#"*25)
+    print("DATA FRAME INFO:")
+    print("#"*25)
+    print(df.info())
