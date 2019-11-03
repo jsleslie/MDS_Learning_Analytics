@@ -4,13 +4,6 @@ import pandas as pd
 import requests
 import json
 
-"""
-For the script to work you must create a .evn file that contains:
-CANVAS_API_TOKEN=...
-In .. paste your token there
-"""
-
-
 def get_canvas_data(write_csv=False):
     """
     Queries canvas API to return discussion topics for selected course.
@@ -64,5 +57,5 @@ def get_canvas_data(write_csv=False):
     return df
 
 
-df = get_canvas_data(True)
-print(df)
+df = get_canvas_data(write_csv=True)
+print(df.info())
