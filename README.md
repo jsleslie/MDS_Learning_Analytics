@@ -1,8 +1,10 @@
 # UBC Learning Analytics Hackathon
 
-### Improving student experience on Canvas discussion boards
+Topic: Improving student experience on Canvas discussion boards
 
 Authors: Anas Muhammad, Alexander Hinton, Sam Edwardes, Jarome Leslie
+
+Program: Master of Data Science
 
 ### Problem
 
@@ -29,3 +31,7 @@ Screenshot of web app:
 ### Requirements 
 
 The python libraries used in this project may be found here: [requirements](https://github.com/jsleslie/MDS_Learning_Analytics/blob/master/doc/requirements.txt)
+
+### Demo code
+
+The code for our demo is located here: [link](https://github.com/jsleslie/MDS_Learning_Analytics/blob/master/app.py)
