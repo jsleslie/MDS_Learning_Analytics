@@ -1,6 +1,6 @@
-# MDS Learning Analytics
+# UBC Learning Analytics Hackathon: Improving student experience on Canvas discussion boards
 
-UBC Learning Analytics Hackathon
+Authors: Anas Muhammad, Alexander Hinton, Sam Edwardes, Jarome Leslie
 
 ### Problem
 
