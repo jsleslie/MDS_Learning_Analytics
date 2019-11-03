@@ -105,7 +105,6 @@ model = train_model(discussion_lists)
 # STATIC FUNCTIONS
 ###########################################
 
-
 def generate_table(df, max_rows=10):
     """
     Renders a table in dash app
@@ -128,6 +127,43 @@ def generate_table(df, max_rows=10):
         ]) for i in range(min(len(df), max_rows))]
     )
 
+
+def test_model(test_title, index, dictionary, model):   
+    # tokenize words and convert to lower case
+    tokenized_list = word_tokenize(test_title)
+
+    # initialize porter stemmer
+    porter = PorterStemmer()
+    
+    # stemming the input text
+    stem_sentence=[]
+    for word in tokenized_list:
+        stem_sentence.append(porter.stem(word))
+    
+    # convert to lower case
+    tokenized_list = [w.lower() for w in stem_sentence]
+
+    # get the alphabetic words
+    words = [word for word in tokenized_list if word.isalpha()]
+
+    #get rid of stop words 
+    words = [w for w in words if not w in stop_words]
+
+    # bag of words representation of the query
+    query_bow = dictionary.doc2bow(words)
+    
+    # create the similarities scores
+    sims_reddit = index[model[query_bow]]
+
+    # put scores in a dict
+    sim_scores = dict()
+    for document_number, score in sorted(enumerate(sims_reddit)):
+        sim_scores[document_number] = score
+    # sort the scores
+    sorted_sim_scores = sorted(sim_scores.items(), key=lambda kv: kv[1], reverse = True)
+    
+    
+    return sorted_sim_scores[:10]
 ###########################################
 # APP LAYOUT
 ###########################################
@@ -172,8 +208,7 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
             html.Hr(),
             html.H5("Existing discussions"),
             html.Label("Check if your question has already been answered:"),
-            html.Div(id="topic_prediction"),
-            html.Table(generate_table(df_discussions, 5))
+            html.Div(id="topic_prediction")
         ])
     ])
 ])
@@ -181,17 +216,20 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
 ###########################################
 # APP CALL BACKS
 ###########################################
-
-
 @app.callback(
     Output(component_id='topic_prediction', component_property='children'),
     [Input(component_id='topic_title', component_property='value')]
 )
 def update_output_div(input_value):
     topic_string = str(input_value)
-    topic_string = topic_string.lower()
-    return 'You\'ve entered "{}"'.format(topic_string)
+    dataframe_index = test_model(topic_string, model[0], model[1], model[2])
+    selected_index = dataframe_index[0:5][0]
+    out = df_discussions.loc[selected_index, ["discussion_topic_title", "thread_ref_link"]]
+    out = generate_table(out)
+    return out
+    # return 'You\'ve entered "{}"'.format(out)
 
 
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
