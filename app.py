@@ -28,8 +28,11 @@ from gensim import similarities
 ###########################################
 # GETTING DATA
 ###########################################
-df_discussions = pd.read_csv(
+df1 = pd.read_csv(
     "data/2019-11-02_reddit-data-learnmath_scrubbed.csv")
+df2 = pd.read_csv(
+    "data/2019-11-02_reddit-data-askscience_scrubbed.csv")
+df_discussions = pd.concat([df1, df2]).reset_index()
 
 
 ##############################################
@@ -128,30 +131,30 @@ def generate_table(df, max_rows=10):
     )
 
 
-def test_model(test_title, index, dictionary, model):   
+def test_model(test_title, index, dictionary, model):
     # tokenize words and convert to lower case
     tokenized_list = word_tokenize(test_title)
 
     # initialize porter stemmer
     porter = PorterStemmer()
-    
+
     # stemming the input text
-    stem_sentence=[]
+    stem_sentence = []
     for word in tokenized_list:
         stem_sentence.append(porter.stem(word))
-    
+
     # convert to lower case
     tokenized_list = [w.lower() for w in stem_sentence]
 
     # get the alphabetic words
     words = [word for word in tokenized_list if word.isalpha()]
 
-    #get rid of stop words 
+    # get rid of stop words
     words = [w for w in words if not w in stop_words]
 
     # bag of words representation of the query
     query_bow = dictionary.doc2bow(words)
-    
+
     # create the similarities scores
     sims_reddit = index[model[query_bow]]
 
@@ -160,9 +163,10 @@ def test_model(test_title, index, dictionary, model):
     for document_number, score in sorted(enumerate(sims_reddit)):
         sim_scores[document_number] = score
     # sort the scores
-    sorted_sim_scores = sorted(sim_scores.items(), key=lambda kv: kv[1], reverse = True)
-    
-    ind_to_return=[]
+    sorted_sim_scores = sorted(
+        sim_scores.items(), key=lambda kv: kv[1], reverse=True)
+
+    ind_to_return = []
     for ind, weight in sorted_sim_scores[0:5]:
         if weight > 0.3:
             ind_to_return.append(ind)
@@ -219,6 +223,8 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
 ###########################################
 # APP CALL BACKS
 ###########################################
+
+
 @app.callback(
     Output(component_id='topic_prediction', component_property='children'),
     [Input(component_id='topic_title', component_property='value')]
@@ -227,12 +233,15 @@ def update_output_div(input_value):
     topic_string = str(input_value)
     dataframe_index = test_model(topic_string, model[0], model[1], model[2])
     if dataframe_index:
-        out = df_discussions.loc[dataframe_index, ["discussion_topic_title", "thread_ref_link"]]
+        out = df_discussions.loc[dataframe_index, [
+            "discussion_topic_title", "thread_ref_link"]]
+        out.rename(columns={"discussion_topic_title": "Topic Title",
+                            "thread_ref_link": "URL"}, inplace=True)
+        out["URL"] = out["URL"].apply(lambda x: html.A("link", href=x))
         out = generate_table(out)
         return out
     else:
         return 'No similar questions found, please post your question!'
-
 
 
 if __name__ == '__main__':
