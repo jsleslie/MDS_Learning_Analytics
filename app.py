@@ -162,8 +162,12 @@ def test_model(test_title, index, dictionary, model):
     # sort the scores
     sorted_sim_scores = sorted(sim_scores.items(), key=lambda kv: kv[1], reverse = True)
     
-    
-    return sorted_sim_scores[:10]
+    ind_to_return=[]
+    for ind, weight in sorted_sim_scores[0:5]:
+        if weight > 0.3:
+            ind_to_return.append(ind)
+
+    return ind_to_return
 ###########################################
 # APP LAYOUT
 ###########################################
@@ -207,7 +211,6 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
                       type="text", size="75", style={'height': 250}),
             html.Hr(),
             html.H5("Existing discussions"),
-            html.Label("Check if your question has already been answered:"),
             html.Div(id="topic_prediction")
         ])
     ])
@@ -223,11 +226,12 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
 def update_output_div(input_value):
     topic_string = str(input_value)
     dataframe_index = test_model(topic_string, model[0], model[1], model[2])
-    selected_index = dataframe_index[0:5][0]
-    out = df_discussions.loc[selected_index, ["discussion_topic_title", "thread_ref_link"]]
-    out = generate_table(out)
-    return out
-    # return 'You\'ve entered "{}"'.format(out)
+    if dataframe_index:
+        out = df_discussions.loc[dataframe_index, ["discussion_topic_title", "thread_ref_link"]]
+        out = generate_table(out)
+        return out
+    else:
+        return 'No similar questions found, please post your question!'
 
 
 
