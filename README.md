@@ -1,6 +1,6 @@
 # UBC Learning Analytics Hackathon
 
-## Improving student experience on Canvas discussion boards
+### Improving student experience on Canvas discussion boards
 
 Authors: Anas Muhammad, Alexander Hinton, Sam Edwardes, Jarome Leslie
 
