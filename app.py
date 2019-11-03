@@ -26,7 +26,7 @@ from gensim import similarities
 
 
 ###########################################
-# GETTING DATA
+# GET DATA
 ###########################################
 df1 = pd.read_csv(
     "data/2019-11-02_reddit-data-learnmath_scrubbed.csv")
@@ -39,9 +39,12 @@ df_discussions = pd.concat([df1, df2]).reset_index()
 # BUILDING MODEL
 ##############################################
 
-
 def convert_csv_to_list(posts_df):
-
+    """[summary]
+    
+    Arguments:
+        posts_df {[type]} -- [description]
+    """
     # take only the combined column
     posts_df = posts_df["combined"]
 
@@ -83,6 +86,14 @@ def convert_csv_to_list(posts_df):
 
 
 def train_model(corpus):
+    """[summary]
+    
+    Arguments:
+        corpus {[type]} -- [description]
+    
+    Returns:
+        [type] -- [description]
+    """
     dictionary_reddit = corpora.Dictionary(corpus)
     num_words = len(dictionary_reddit.keys())
 
@@ -132,6 +143,17 @@ def generate_table(df, max_rows=10):
 
 
 def test_model(test_title, index, dictionary, model):
+    """[summary]
+    
+    Arguments:
+        test_title {[type]} -- [description]
+        index {[type]} -- [description]
+        dictionary {[type]} -- [description]
+        model {[type]} -- [description]
+    
+    Returns:
+        [type] -- [description]
+    """
     # tokenize words and convert to lower case
     tokenized_list = word_tokenize(test_title)
 
@@ -177,7 +199,6 @@ def test_model(test_title, index, dictionary, model):
 # APP LAYOUT
 ###########################################
 
-
 # COLOUR AND STYLE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -208,7 +229,7 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
             html.H4("Start a new discussion"),
             html.Label("New topic title:"),
             dcc.Input(id="topic_title", placeholder="Topic Title",
-                      type="text", size="75"),
+                      type="text", size="75", value=""),
             html.Br(),
             html.Br(),
             html.Label("New message:"),
@@ -227,7 +248,6 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
 ###########################################
 # APP CALL BACKS
 ###########################################
-
 
 @app.callback(
     Output(component_id='topic_prediction', component_property='children'),
@@ -249,4 +269,4 @@ def update_output_div(input_value):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
