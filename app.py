@@ -19,7 +19,32 @@ import plotly_express as px
 # GETTING DATA
 ###########################################
 df_discussions = pd.read_csv("data/2019-11-02_reddit-data-learnmath_scrubbed.csv")
+df_discussions = df_discussions.loc[:, ["discussion_topic_title", "thread_ref_link"]]
 
+###########################################
+# STATIC FUNCTIONS
+###########################################
+def generate_table(df, max_rows=10):
+    """
+    Renders a table in dash app
+    
+    Arguments:
+        df {pd.DataFrame} -- Data frame to render
+    
+    Keyword Arguments:
+        max_rows {int} -- number of rows to render (default: {10})
+    
+    Returns:
+        html.Table -- table ready to be rendered by
+    """
+    return html.Table(
+        # Header
+        [html.Tr([html.Th(col) for col in df.columns])] +
+        # Body
+        [html.Tr([
+            html.Td(df.iloc[i][col]) for col in df.columns
+        ]) for i in range(min(len(df), max_rows))]
+    )
 
 ###########################################
 # APP LAYOUT
@@ -64,16 +89,24 @@ app.layout = html.Div(style={'backgroundColor': colors['light_grey']}, children=
             html.Hr(),
             html.H5("Existing discussions"),
             html.Label("Check if your question has already been answered:"),
-            html.P("...placeholder for results...")
-            
+            html.Div(id="topic_prediction"),
+            html.Table(generate_table(df_discussions, 5))
         ])
     ])
 ])
 
-
 ###########################################
 # APP CALL BACKS
 ###########################################
+@app.callback(
+    Output(component_id='topic_prediction', component_property='children'),
+    [Input(component_id='topic_title', component_property='value')]
+)
+def update_output_div(input_value):
+    topic_string = str(input_value)
+    topic_string = topic_string.lower()
+    return 'You\'ve entered "{}"'.format(topic_string)
+
 
 
 if __name__ == '__main__':
