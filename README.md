@@ -26,7 +26,7 @@ Screenshot of web app:
 
 ### Presentation
 
-[Canvas thread recommender presenation](https://github.com/jsleslie/MDS_Learning_Analytics/blob/master/pres/Canvas_thread_recommender.pptx)
+Our presentation may be found here: [Canvas thread recommender presenation](https://github.com/jsleslie/MDS_Learning_Analytics/blob/master/pres/Canvas_thread_recommender.pptx)
 
 ### Requirements 
 
