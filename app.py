@@ -12,7 +12,7 @@ import nltk
 import json
 import pandas as pd
 import plotly.graph_objs as go
-import plotly_express as px
+
 # languge
 from collections import defaultdict
 import nltk
