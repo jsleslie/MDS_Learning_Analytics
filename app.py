@@ -31,7 +31,6 @@ df_discussions = pd.concat([df1, df2]).reset_index()
 ##############################################
 # BUILDING MODEL
 ##############################################
-#stop_words = stopwords.words('english')
 discussion_lists = convert_csv_to_list(df_discussions)
 model = train_model(discussion_lists)
 
@@ -39,7 +38,6 @@ model = train_model(discussion_lists)
 ###########################################
 # STATIC FUNCTIONS
 ###########################################
-
 def generate_table(df, max_rows=10):
     """
     Renders a table in dash app
@@ -62,59 +60,6 @@ def generate_table(df, max_rows=10):
         ]) for i in range(min(len(df), max_rows))]
     )
 
-
-def test_model(test_title, index, dictionary, model):
-    """[summary]
-    
-    Arguments:
-        test_title {[type]} -- [description]
-        index {[type]} -- [description]
-        dictionary {[type]} -- [description]
-        model {[type]} -- [description]
-    
-    Returns:
-        [type] -- [description]
-    """
-    # tokenize words and convert to lower case
-    tokenized_list = word_tokenize(test_title)
-
-    # initialize porter stemmer
-    porter = PorterStemmer()
-
-    # stemming the input text
-    stem_sentence = []
-    for word in tokenized_list:
-        stem_sentence.append(porter.stem(word))
-
-    # convert to lower case
-    tokenized_list = [w.lower() for w in stem_sentence]
-
-    # get the alphabetic words
-    words = [word for word in tokenized_list if word.isalpha()]
-
-    # get rid of stop words
-    words = [w for w in words if not w in stop_words]
-
-    # bag of words representation of the query
-    query_bow = dictionary.doc2bow(words)
-
-    # create the similarities scores
-    sims_reddit = index[model[query_bow]]
-
-    # put scores in a dict
-    sim_scores = dict()
-    for document_number, score in sorted(enumerate(sims_reddit)):
-        sim_scores[document_number] = score
-    # sort the scores
-    sorted_sim_scores = sorted(
-        sim_scores.items(), key=lambda kv: kv[1], reverse=True)
-
-    ind_to_return = []
-    for ind, weight in sorted_sim_scores[0:5]:
-        if weight > 0.3:
-            ind_to_return.append(ind)
-
-    return ind_to_return
 
 ###########################################
 # APP LAYOUT
